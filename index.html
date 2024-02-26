@@ -16,22 +16,26 @@
             <input id="player2" type="text" value="" placeholder="Player 2" />
             <input id="player3" type="text" value="" placeholder="Player 3" />
             <input id="player4" type="text" value="" placeholder="Player 4" />
-            <button id="startButton">Start Game</button>
+            <button id="startButton" onclick="startGame()">Start Game</button>
         </div>
     </div>
     <div id="turnChangeScreen" class="full-screen">
         <div class="title">Tony's Turn</div>
-        <button id="startTurn">I am Tony, let's go!</button>
+        <button id="startTurn" onclick="startTurn()">I am Tony, let's go!</button>
     </div>
     <div id="playTurnScreen" class="full-screen">
         <div>Tony</div>
         <div>Current score: 1600</div>
         <div class="space-filler"></div>
-        <button >Roll 5 Dice</button>
+        <button onclick="showWin()">Roll 5 Dice</button>
         <div>Amazing roll animations and a cool way of selecting dice to score</div>
         <div class="space-filler"></div>
         <div>Score for this round: 500</div>
         <button>Bank xyz points and pass to Mike</button>
+    </div>
+    <div id="winScreen" class="full-screen">
+        <div class="title">Tony Wins!</div>
+        <button id="newGame" onclick="showTitleScreen()">New Game</button>
     </div>
     <script src="index.js"></script>
 </body>
