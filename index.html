@@ -12,10 +12,10 @@
         <div id="subTitle">Rise of the Farklnauts</div>
         <div id="playerList">
             <div>Who is playing?</div>
-            <input id="player0" type="text" value="" placeholder="Player 1" />
-            <input id="player2" type="text" value="" placeholder="Player 2" />
-            <input id="player3" type="text" value="" placeholder="Player 3" />
-            <input id="player4" type="text" value="" placeholder="Player 4" />
+            <input id="player1" type="text" value="" placeholder="Player 1" oninput="validateAtLeastTwoPlayers()"/>
+            <input id="player2" type="text" value="" placeholder="Player 2" oninput="validateAtLeastTwoPlayers()"/>
+            <input id="player3" type="text" value="" placeholder="Player 3" oninput="validateAtLeastTwoPlayers()"/>
+            <input id="player4" type="text" value="" placeholder="Player 4" oninput="validateAtLeastTwoPlayers()"/>
             <button id="startButton" onclick="startGame()">Start Game</button>
         </div>
     </div>

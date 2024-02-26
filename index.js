@@ -22,8 +22,32 @@ function changeScreen(title, turnChange, playTurn, win) {
     document.getElementById("winScreen").style.display = win
 }
 
+function isValidPlayer(playerNumber) {
+    const playerInputId = "player" + playerNumber
+    return document.getElementById(playerInputId).value !== ''
+}
+
+function validateAtLeastTwoPlayers() {
+    let playerCount = 0
+    if (isValidPlayer(1)) playerCount++
+    if (isValidPlayer(2)) playerCount++
+    if (isValidPlayer(3)) playerCount++
+    if (isValidPlayer(4)) playerCount++
+
+    console.log('I have found', playerCount, 'valid players')
+
+    if(playerCount >=2) {
+        document.getElementById('startButton').disabled = false
+    }
+    else {
+        document.getElementById('startButton').disabled = true
+    }
+    
+}
+
 function showTitleScreen() {
     changeSubtitle()
+    validateAtLeastTwoPlayers()
     changeScreen(null, 'none', 'none', 'none')
 }
 

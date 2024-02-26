@@ -25,6 +25,10 @@ button {
     font-weight: 700;
 }
 
+button:disabled {
+    background-color: gray;
+}
+
 .secondary-button {
     border: solid;
     border-width: 1px;
@@ -73,6 +77,11 @@ input {
     display: flex;
     flex-direction: column;
     gap: 0.2em;
+}
+
+#twoPlayersRequired {
+    margin-top: 1em;
+    max-width: 10em;
 }
 
 #startButton {
