@@ -34,15 +34,15 @@ function validateAtLeastTwoPlayers() {
     if (isValidPlayer(3)) playerCount++
     if (isValidPlayer(4)) playerCount++
 
-    console.log('I have found', playerCount, 'valid players')
-
     if(playerCount >=2) {
         document.getElementById('startButton').disabled = false
+        document.getElementById('twoPlayersRequired').style.display = 'none'
     }
     else {
         document.getElementById('startButton').disabled = true
+        document.getElementById('twoPlayersRequired').style.display = null
     }
-    
+
 }
 
 function showTitleScreen() {

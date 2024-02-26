@@ -26,7 +26,8 @@ button {
 }
 
 button:disabled {
-    background-color: gray;
+    background-color: lightgreen;
+    color: grey;
 }
 
 .secondary-button {
@@ -80,8 +81,8 @@ input {
 }
 
 #twoPlayersRequired {
-    margin-top: 1em;
-    max-width: 10em;
+    max-width: 15em;
+    font-size: 0.8em;
 }
 
 #startButton {
