@@ -1,0 +1,90 @@
+html {
+    height: 100%;
+}
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: green;
+    color: white;
+}
+
+button {
+    width: 15em;
+
+    border: none;
+    border-width: 1px;
+    border-radius: 0.5em;
+    padding: 0.5em;
+
+    background-color: white;
+    color: black;
+    font-weight: 700;
+}
+
+.secondary-button {
+    border: solid;
+    border-width: 1px;
+    background-color: green;
+    color: white;
+}
+
+input {
+    border: none;
+    border-radius: 0.5em;
+    background-color: white;
+    padding: 0.5em;
+}
+
+.full-screen {
+    width: 100%;
+    height: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    font-size: 3em;
+    font-weight: 700;
+    text-shadow: 3px 3px black;
+}
+
+#subTitle {
+    font-size: 0.8em;
+    font-weight: 700;
+    font-style: italic;
+    color: white;
+}
+
+#playerList {
+    margin-top: 1em;
+
+    border: solid;
+    border-width: 1px;
+    border-radius: 1em;
+    padding: 1em;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+}
+
+#startButton {
+    margin-top: 1em;
+}
+
+#startTurn {
+    margin-top: 2em;
+}
+
+#playTurnScreen {
+    gap: 0.5em;
+}
+
+.space-filler {
+    flex: 3;
+}
