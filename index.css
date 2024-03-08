@@ -116,7 +116,7 @@ input {
     justify-content: center; 
 }
 
-.scoreboardEntry {
+.scoreboard-entry {
     border: solid;
     border-width: 2px;
     border-radius: 0.5em;
@@ -128,16 +128,16 @@ input {
     align-items: center;
 }
 
-.currentPlayer {
+.current-player {
     border-color: white;
 }
 
-.scoreboardPlayer {
+.scoreboard-player {
     font-weight: 700;
     margin-bottom: 0.25em;
 }
 
-.scoreboardScore {
+.scoreboard-score {
     background-color: white;
     color: black;
     border-radius: 0.25em;
@@ -148,4 +148,33 @@ input {
     padding: 0.25em 1em 0.25em 1em;
     font-weight: 700;
     font-size: 1.2em;
+}
+
+#endTurnButton {
+    margin-bottom: 0.5em;
+}
+
+#diceMat {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.dice {
+    width: 2em;
+    height: 2em;
+    margin: 0.25em;
+    background-color: white;
+    color: black;
+    border-radius: 0.25em;
+
+    font-size: 2em;
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dice-selected {
+    background-color: lightgreen;
 }

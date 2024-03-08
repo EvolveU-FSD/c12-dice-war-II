@@ -12,6 +12,7 @@ const subTitles = [
 let players = []
 let currentPlayerIndex = 0
 let currentTurn = {}
+let winner
 
 function newPlayer(name) {
     return { 
@@ -23,8 +24,10 @@ function newPlayer(name) {
 function newTurn() {
     return { 
         score: 0,
-        dice: 5,
-        farkled: false
+        dice: 6,
+        rolls: [],
+        farkled: false,
+        consideredScore: 0
     }
 }
 
@@ -48,11 +51,11 @@ function changeScreen(screenId) {
 function updateScoreboard() {
     let playerScores = ''
     players.forEach((player, index) => {
-        let currentPlayer = (index == currentPlayerIndex) ? ' currentPlayer' : '' 
+        let currentPlayer = (index == currentPlayerIndex) ? ' current-player' : '' 
         let scoreboardEntry = 
-            "<div class='scoreboardEntry " + currentPlayer + "'>" + 
-            "  <div class='scoreboardPlayer'>" + player.name + "</div>" +
-            "  <div class='scoreboardScore'>" + player.score + "</div>" +
+            "<div class='scoreboard-entry " + currentPlayer + "'>" + 
+            "  <div class='scoreboard-player'>" + player.name + "</div>" +
+            "  <div class='scoreboard-score'>" + player.score + "</div>" +
             "</div>"
         playerScores += scoreboardEntry
     })
@@ -104,23 +107,6 @@ function showTitleScreen() {
     changeScreen('titleScreen')
 }
 
-function showTurnChange() {
-    const currentPlayer = players[currentPlayerIndex]
-    document.getElementById('titleName').innerHTML = currentPlayer.name
-    document.getElementById('confirmName').innerHTML = currentPlayer.name
-    updateScoreboard()
-    changeScreen('turnChangeScreen')
-}
-
-function showPlayTurn() {
-    changeScreen('playTurnScreen')
-}
-
-function showWin() {
-    updateScoreboard()
-    changeScreen('winScreen')
-}
-
 function startGame() {
     players = []
     addPlayerIfValid(1)
@@ -129,7 +115,24 @@ function startGame() {
     addPlayerIfValid(4)
     currentPlayerIndex = 0
 
+    winner = ''
+    
     showTurnChange()
+}
+
+function showTurnChange() {
+    const currentPlayer = players[currentPlayerIndex]
+    document.getElementById('titleName').innerHTML = currentPlayer.name
+    document.getElementById('confirmName').innerHTML = currentPlayer.name
+    updateScoreboard()
+
+    changeScreen('turnChangeScreen')
+}
+
+function showWin(winner) {
+    updateScoreboard()
+    document.getElementById('winner').innerHTML = winner
+    changeScreen('winScreen')
 }
 
 function startTurn() {
@@ -137,28 +140,78 @@ function startTurn() {
     currentTurn = newTurn()
 
     updateScoreboard()
-    refreshTurnScoring()
+    refreshDice()
 
+    document.getElementById('diceCount').innerHTML = currentTurn.dice
     document.getElementById('rollDiceButton').style.display = null
     document.getElementById('endTurnButton').innerHTML = 'Bank Points and End Turn'
 
-    showPlayTurn()
+    changeScreen('playTurnScreen')
 }
 
 function rollDice() {
-    let randomScoreDice = currentTurn.score + Math.floor(Math.random()*5)*100
-    currentTurn.score = currentTurn.score + randomScoreDice
-    currentTurn.dice = currentTurn.dice-1
-    
-    refreshTurnScoring()
-    if (currentTurn.dice === 0 || randomScoreDice === 0) {
+    currentTurn.score = currentTurn.score + currentTurn.consideredScore
+
+    currentTurn.rolls = []
+    for(let die = 0; die < currentTurn.dice; die++) {
+        currentTurn.rolls.push({
+            value: d6(),
+            selectedForScoring: false
+        })
+    }
+
+    refreshDice()
+    if (noDiceScore()) {
         farkle()
     }
 }
 
-function refreshTurnScoring() {
+function refreshDice() {
+    let diceDivs = ''
+    currentTurn.rolls.forEach((roll, index) => {
+        const scoringSelected = (roll.selectedForScoring) ? 'dice-selected' : ''
+        diceDivs += "<div class='dice "+scoringSelected+"' onclick='toggleScoreDice("+index+")'>"+roll.value+"</div>"
+    })
+
+    document.getElementById('diceMat').innerHTML = diceDivs
+}
+
+function getUnScoringDice() {
+    return currentTurn.rolls.filter((d) => !d.selectedForScoring)
+}
+
+function getScoringDice() {
+    return currentTurn.rolls.filter((d) => d.selectedForScoring)
+}
+
+function toggleScoreDice(index) {
+    currentTurn.rolls[index].selectedForScoring = !currentTurn.rolls[index].selectedForScoring
+    const unScoredDiceCount = getUnScoringDice().length
+    currentTurn.dice = unScoredDiceCount
+    currentTurn.consideredScore = score(getScoringDice())
+
+    refreshDice()
+
     document.getElementById('diceCount').innerHTML = currentTurn.dice
-    document.getElementById('turnScore').innerHTML = currentTurn.score
+    document.getElementById('turnScore').innerHTML = currentTurn.score+currentTurn.consideredScore
+
+}
+
+function score(rolls) {
+    consideredScore = 0
+    rolls.forEach((roll) => {
+        if (roll.value === 5) consideredScore += 50
+        if (roll.value === 1) consideredScore += 100
+    })
+    return consideredScore
+}
+
+function noDiceScore() {
+    return score(currentTurn.rolls) === 0    
+}
+
+function d6() {
+    return Math.floor(Math.random()*6)+1
 }
 
 function farkle() {
@@ -170,19 +223,39 @@ function farkle() {
 
 function endTurn() {
     if (!currentTurn.farkled) {
+        currentTurn.score = currentTurn.score + currentTurn.consideredScore
+
         const currentPlayer = players[currentPlayerIndex]
         currentPlayer.score += currentTurn.score    
     }
     gotoNextPlayer()
 }
 
-
 function gotoNextPlayer() {
     currentPlayerIndex++
     if (currentPlayerIndex >= players.length) {
         currentPlayerIndex = 0
+        checkWinner()
     }
-    showTurnChange()
+
+    if (!winner) {
+        showTurnChange()
+    }
+    else {
+        showWin(winner)
+    }
+}
+
+function checkWinner() {
+    winner=''
+    highestScore = 0
+    players.forEach((player, index) => {
+        if ((player.score >= 10000) && (player.score > highestScore)){
+            winner = player.name
+            highestScore = player.score
+            currentPlayerIndex = index
+        }
+    })
 }
 
 showTitleScreen()

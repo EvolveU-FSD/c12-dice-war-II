@@ -27,14 +27,14 @@
     </div>
     <div id="playTurnScreen" class="full-screen">
         <div class="space-filler"></div>
+        <div id="diceMat"></div>
         <button id="rollDiceButton" onclick="rollDice()">Roll <span id="diceCount">COUNT</span> Dice</button>
-        <div>Amazing roll animations and a cool way of selecting dice to score</div>
         <div class="space-filler"></div>
         <div>Points: <span id="turnScore"></span></div>
         <button id="endTurnButton" onclick="endTurn()">Bank points and End Turn</button>
     </div>
     <div id="winScreen" class="full-screen">
-        <div class="title">Tony Wins!</div>
+        <div class="title"><span id="winner">PLAYER</span> Wins!</div>
         <button id="newGame" onclick="showTitleScreen()">New Game</button>
     </div>
     <script src="index.js"></script>
