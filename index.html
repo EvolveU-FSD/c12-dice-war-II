@@ -20,18 +20,17 @@
             <div id="twoPlayersRequired">Two players are required to start a new game</div>
         </div>
     </div>
+    <div id="scoreboard"></div>
     <div id="turnChangeScreen" class="full-screen">
         <div class="title"><span id="titleName">PLAYER</span>'s Turn</div>
         <button id="startTurn" onclick="startTurn()">I am <span id="confirmName">PLAYER</span>, let's go!</button>
     </div>
     <div id="playTurnScreen" class="full-screen">
-        <div id="playerName">PLAYER</div>
-        <div>Current score: <span id="playerScore">SCORE</span></div>
         <div class="space-filler"></div>
         <button id="rollDiceButton" onclick="rollDice()">Roll <span id="diceCount">COUNT</span> Dice</button>
         <div>Amazing roll animations and a cool way of selecting dice to score</div>
         <div class="space-filler"></div>
-        <div>Score for this round: <span id="turnScore"></span></div>
+        <div>Points: <span id="turnScore"></span></div>
         <button id="endTurnButton" onclick="endTurn()">Bank points and End Turn</button>
     </div>
     <div id="winScreen" class="full-screen">

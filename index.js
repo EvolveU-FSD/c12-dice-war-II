@@ -28,10 +28,6 @@ function newTurn() {
     }
 }
 
-function getNextPlayerName() {
-
-}
-
 function changeSubtitle() {
     const randomSubTitleIndex = Math.floor((Math.random()*subTitles.length))
     const randomSubTitle = subTitles[randomSubTitleIndex]
@@ -49,9 +45,25 @@ function changeScreen(screenId) {
     showOrHide("winScreen", screenId)
 }
 
-function changeEndTurnButton() {
-    showOrHide("endTurnButton", screenId)
-    showOrHide("turnChangeScreen", screenId)
+function updateScoreboard() {
+    let playerScores = ''
+    players.forEach((player, index) => {
+        let currentPlayer = (index == currentPlayerIndex) ? ' currentPlayer' : '' 
+        let scoreboardEntry = 
+            "<div class='scoreboardEntry " + currentPlayer + "'>" + 
+            "  <div class='scoreboardPlayer'>" + player.name + "</div>" +
+            "  <div class='scoreboardScore'>" + player.score + "</div>" +
+            "</div>"
+        playerScores += scoreboardEntry
+    })
+
+    const scoreboard = document.getElementById("scoreboard")
+    scoreboard.innerHTML = playerScores    
+    scoreboard.style.display = null    
+}
+
+function hideScoreboard() {
+    document.getElementById("scoreboard").style.display = "none"  
 }
 
 function isValidPlayer(playerNumber) {
@@ -88,6 +100,7 @@ function validateAtLeastTwoPlayers() {
 function showTitleScreen() {
     changeSubtitle()
     validateAtLeastTwoPlayers()
+    hideScoreboard()
     changeScreen('titleScreen')
 }
 
@@ -95,6 +108,7 @@ function showTurnChange() {
     const currentPlayer = players[currentPlayerIndex]
     document.getElementById('titleName').innerHTML = currentPlayer.name
     document.getElementById('confirmName').innerHTML = currentPlayer.name
+    updateScoreboard()
     changeScreen('turnChangeScreen')
 }
 
@@ -103,6 +117,7 @@ function showPlayTurn() {
 }
 
 function showWin() {
+    updateScoreboard()
     changeScreen('winScreen')
 }
 
@@ -121,9 +136,7 @@ function startTurn() {
     const currentPlayer = players[currentPlayerIndex]
     currentTurn = newTurn()
 
-    document.getElementById('playerName').innerHTML = currentPlayer.name
-    document.getElementById('playerScore').innerHTML = currentPlayer.score
-
+    updateScoreboard()
     refreshTurnScoring()
 
     document.getElementById('rollDiceButton').style.display = null
@@ -133,12 +146,12 @@ function startTurn() {
 }
 
 function rollDice() {
+    let randomScoreDice = currentTurn.score + Math.floor(Math.random()*5)*100
+    currentTurn.score = currentTurn.score + randomScoreDice
     currentTurn.dice = currentTurn.dice-1
-    currentTurn.score = currentTurn.score + Math.floor(Math.random()*5)*100
-
+    
     refreshTurnScoring()
-
-    if (currentTurn.dice === 0) {
+    if (currentTurn.dice === 0 || randomScoreDice === 0) {
         farkle()
     }
 }
