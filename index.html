@@ -21,18 +21,18 @@
         </div>
     </div>
     <div id="turnChangeScreen" class="full-screen">
-        <div class="title">Tony's Turn</div>
-        <button id="startTurn" onclick="startTurn()">I am Tony, let's go!</button>
+        <div class="title"><span id="titleName">PLAYER</span>'s Turn</div>
+        <button id="startTurn" onclick="startTurn()">I am <span id="confirmName">PLAYER</span>, let's go!</button>
     </div>
     <div id="playTurnScreen" class="full-screen">
-        <div>Tony</div>
-        <div>Current score: 1600</div>
+        <div id="playerName">PLAYER</div>
+        <div>Current score: <span id="playerScore">SCORE</span></div>
         <div class="space-filler"></div>
-        <button onclick="showWin()">Roll 5 Dice</button>
+        <button id="rollDiceButton" onclick="rollDice()">Roll <span id="diceCount">COUNT</span> Dice</button>
         <div>Amazing roll animations and a cool way of selecting dice to score</div>
         <div class="space-filler"></div>
-        <div>Score for this round: 500</div>
-        <button>Bank xyz points and pass to Mike</button>
+        <div>Score for this round: <span id="turnScore"></span></div>
+        <button id="endTurnButton" onclick="endTurn()">Bank points and End Turn</button>
     </div>
     <div id="winScreen" class="full-screen">
         <div class="title">Tony Wins!</div>
