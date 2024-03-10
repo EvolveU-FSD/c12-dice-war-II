@@ -31,11 +31,16 @@ function newTurn() {
     }
 }
 
+function getCurrentPlayer() {
+    return players[currentPlayerIndex]
+}
+
 function changeSubtitle() {
     const randomSubTitleIndex = Math.floor((Math.random()*subTitles.length))
     const randomSubTitle = subTitles[randomSubTitleIndex]
     document.getElementById("subTitle").innerHTML = randomSubTitle
 }
+
 
 function showOrHide(elementId, desiredElementId) {
     document.getElementById(elementId).style.display = (elementId !== desiredElementId ) ? 'none' : null
@@ -121,7 +126,7 @@ function startGame() {
 }
 
 function showTurnChange() {
-    const currentPlayer = players[currentPlayerIndex]
+    const currentPlayer = getCurrentPlayer()
     document.getElementById('titleName').innerHTML = currentPlayer.name
     document.getElementById('confirmName').innerHTML = currentPlayer.name
     updateScoreboard()
@@ -136,7 +141,7 @@ function showWin(winner) {
 }
 
 function startTurn() {
-    const currentPlayer = players[currentPlayerIndex]
+    const currentPlayer = getCurrentPlayer()
     currentTurn = newTurn()
 
     updateScoreboard()
@@ -150,8 +155,10 @@ function startTurn() {
 }
 
 function rollDice() {
+    // commit what has been scored so far
     currentTurn.score = currentTurn.score + currentTurn.consideredScore
 
+    // make new rolls
     currentTurn.rolls = []
     for(let die = 0; die < currentTurn.dice; die++) {
         currentTurn.rolls.push({
@@ -160,6 +167,7 @@ function rollDice() {
         })
     }
 
+    // update gui
     refreshDice()
     if (noDiceScore()) {
         farkle()
@@ -198,12 +206,52 @@ function toggleScoreDice(index) {
 }
 
 function score(rolls) {
-    consideredScore = 0
+    let { triplesScore, remainingDice } = scoreTriples(rolls)
+    let { singlesScore  } = scoreSingles(remainingDice)
+    return triplesScore + singlesScore
+}
+
+function scoreTriples(rolls) {
+    let triplesScore = 0
+    let remainingDice = []
+
+    let sortedDice = [ ...rolls ]
+    sortedDice.sort((a, b) => a.value - b.value)
+
+    lastValueChangeIndex = 0
+    currentValue = sortedDice[0].value
+    for(let index = 0; index < sortedDice.length; index++) {
+        nextDice = sortedDice[index]
+        if (nextDice.value !== currentValue) {
+            remainingDice.push(...sortedDice.slice(lastValueChangeIndex, index))
+            lastValueChangeIndex = index
+            currentValue = nextDice.value
+        }
+        else if ((index - lastValueChangeIndex) === 2) {
+            triplesScore += (nextDice.value ===1) ? 1000 : (nextDice.value * 100) 
+            lastValueChangeIndex = index+1  // start a new possible triple
+        }
+    }
+    console.log({sortedDice, lastValueChangeIndex, extras: sortedDice.slice(lastValueChangeIndex)})
+    remainingDice.push(...sortedDice.slice(lastValueChangeIndex))
+    return { triplesScore, remainingDice }
+}
+
+function scoreSingles(rolls) {
+    let singlesScore = 0
+    let remainingDice = []
     rolls.forEach((roll) => {
-        if (roll.value === 5) consideredScore += 50
-        if (roll.value === 1) consideredScore += 100
+        if (roll.value === 5) {
+            singlesScore += 50
+        }
+        else if (roll.value === 1) {
+            singlesScore += 100
+        }
+        else {
+            remainingDice.push()
+        }
     })
-    return consideredScore
+    return { singlesScore, remainingDice }
 }
 
 function noDiceScore() {
@@ -225,7 +273,7 @@ function endTurn() {
     if (!currentTurn.farkled) {
         currentTurn.score = currentTurn.score + currentTurn.consideredScore
 
-        const currentPlayer = players[currentPlayerIndex]
+        const currentPlayer = getCurrentPlayer()
         currentPlayer.score += currentTurn.score    
     }
     gotoNextPlayer()
