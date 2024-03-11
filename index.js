@@ -164,6 +164,7 @@ function rollDice() {
     for(let die = 0; die < currentTurn.dice; die++) {
         currentTurn.rolls.push({
             value: d6(),
+            spotInLandingZone: randomSpot(),
             selectedForScoring: false
         })
     }
@@ -175,11 +176,43 @@ function rollDice() {
     }
 }
 
+function randomSpot() {
+    return {
+        top: Math.random()*3,
+        left: Math.random()*3
+    }
+}
+
+function refreshScoreAndDice() {
+    const unScoredDiceCount = getUnScoringDice().length    
+    currentTurn.dice = unScoredDiceCount
+    if ((unScoredDiceCount === 0) || unscoredDicePair()) {
+        currentTurn.dice = 6
+    }
+    currentTurn.consideredScore = score(getScoringDice())
+
+    refreshDice()
+
+    const someSelectedDiceDontCountInScore = notAllDiceCount(getScoringDice())
+
+    document.getElementById('rollDiceButton').style.display = (!currentTurn.consideredScore || someSelectedDiceDontCountInScore) ? 'none': null
+    document.getElementById('diceCount').innerHTML = currentTurn.dice
+    document.getElementById('turnScore').innerHTML = currentTurn.score+currentTurn.consideredScore
+}
+
 function refreshDice() {
     let diceDivs = ''
     currentTurn.rolls.forEach((roll, index) => {
         const scoringSelected = (roll.selectedForScoring) ? 'dice-selected' : ''
-        diceDivs += "<div class='dice "+scoringSelected+"' onclick='toggleScoreDice("+index+")'>"+roll.value+"</div>"
+        diceDivs += (
+            "<div class='landing-zone'>"+
+                "<div "+
+                  "class='dice "+scoringSelected+"' " +
+                  "style='position:relative;top:"+roll.spotInLandingZone.top+"em; left:"+roll.spotInLandingZone.left+"em;' " +
+                  "onclick='toggleScoreDice("+index+")' " +
+                ">"+roll.value+"</div>" +
+            "</div>"
+        )
     })
 
     document.getElementById('diceMat').innerHTML = diceDivs
@@ -201,23 +234,6 @@ function unscoredDicePair() {
 function toggleScoreDice(index) {
     currentTurn.rolls[index].selectedForScoring = !currentTurn.rolls[index].selectedForScoring
     refreshScoreAndDice()
-}
-
-function refreshScoreAndDice() {
-    const unScoredDiceCount = getUnScoringDice().length    
-    currentTurn.dice = unScoredDiceCount
-    if ((unScoredDiceCount === 0) || unscoredDicePair()) {
-        currentTurn.dice = 6
-    }
-    currentTurn.consideredScore = score(getScoringDice())
-
-    refreshDice()
-
-    const someSelectedDiceDontCountInScore = notAllDiceCount(getScoringDice())
-
-    document.getElementById('rollDiceButton').style.display = (!currentTurn.consideredScore || someSelectedDiceDontCountInScore) ? 'none': null
-    document.getElementById('diceCount').innerHTML = currentTurn.dice
-    document.getElementById('turnScore').innerHTML = currentTurn.score+currentTurn.consideredScore
 }
 
 function score(rolls) {
@@ -322,7 +338,7 @@ function checkWinner() {
     winner=''
     highestScore = 0
     players.forEach((player, index) => {
-        if ((player.score >= 10000) && (player.score > highestScore)){
+        if ((player.score >= 5000) && (player.score > highestScore)){
             winner = player.name
             highestScore = player.score
             currentPlayerIndex = index

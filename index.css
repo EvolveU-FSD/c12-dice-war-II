@@ -159,6 +159,11 @@ input {
     flex-wrap: wrap;
 }
 
+.landing-zone {
+    width: 10em;
+    height: 10em;
+}
+
 .dice {
     width: 2em;
     height: 2em;
