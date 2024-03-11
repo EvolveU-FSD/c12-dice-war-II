@@ -157,6 +157,7 @@ function startTurn() {
 function rollDice() {
     // commit what has been scored so far
     currentTurn.score = currentTurn.score + currentTurn.consideredScore
+    currentTurn.consideredScore = 0
 
     // make new rolls
     currentTurn.rolls = []
@@ -168,8 +169,8 @@ function rollDice() {
     }
 
     // update gui
-    refreshDice()
-    if (noDiceScore()) {
+    refreshScoreAndDice()
+    if (noDiceScore() && !unscoredDicePair()) {
         farkle()
     }
 }
@@ -192,17 +193,31 @@ function getScoringDice() {
     return currentTurn.rolls.filter((d) => d.selectedForScoring)
 }
 
+function unscoredDicePair() {
+    const unscoringDice = getUnScoringDice()
+    return (unscoringDice.length === 2) && (unscoringDice[0].value === unscoringDice[1].value) 
+}
+
 function toggleScoreDice(index) {
     currentTurn.rolls[index].selectedForScoring = !currentTurn.rolls[index].selectedForScoring
-    const unScoredDiceCount = getUnScoringDice().length
+    refreshScoreAndDice()
+}
+
+function refreshScoreAndDice() {
+    const unScoredDiceCount = getUnScoringDice().length    
     currentTurn.dice = unScoredDiceCount
+    if ((unScoredDiceCount === 0) || unscoredDicePair()) {
+        currentTurn.dice = 6
+    }
     currentTurn.consideredScore = score(getScoringDice())
 
     refreshDice()
 
+    const someSelectedDiceDontCountInScore = notAllDiceCount(getScoringDice())
+
+    document.getElementById('rollDiceButton').style.display = (!currentTurn.consideredScore || someSelectedDiceDontCountInScore) ? 'none': null
     document.getElementById('diceCount').innerHTML = currentTurn.dice
     document.getElementById('turnScore').innerHTML = currentTurn.score+currentTurn.consideredScore
-
 }
 
 function score(rolls) {
@@ -211,12 +226,22 @@ function score(rolls) {
     return triplesScore + singlesScore
 }
 
+function notAllDiceCount(rolls) {
+    let { remainingDice: afterTriples } = scoreTriples(rolls)
+    let { remainingDice: afterSingles } = scoreSingles(afterTriples)
+    console.log('Not all dice count:', afterSingles)
+    return afterSingles.length > 0
+}
+
 function scoreTriples(rolls) {
+
     let triplesScore = 0
     let remainingDice = []
 
     let sortedDice = [ ...rolls ]
     sortedDice.sort((a, b) => a.value - b.value)
+
+    if (rolls.length < 3) return { triplesScore, remainingDice: sortedDice}
 
     lastValueChangeIndex = 0
     currentValue = sortedDice[0].value
@@ -232,7 +257,6 @@ function scoreTriples(rolls) {
             lastValueChangeIndex = index+1  // start a new possible triple
         }
     }
-    console.log({sortedDice, lastValueChangeIndex, extras: sortedDice.slice(lastValueChangeIndex)})
     remainingDice.push(...sortedDice.slice(lastValueChangeIndex))
     return { triplesScore, remainingDice }
 }
@@ -248,7 +272,7 @@ function scoreSingles(rolls) {
             singlesScore += 100
         }
         else {
-            remainingDice.push()
+            remainingDice.push(roll)
         }
     })
     return { singlesScore, remainingDice }
